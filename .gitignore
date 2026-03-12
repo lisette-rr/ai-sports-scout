@@ -60,3 +60,4 @@ build-iPhoneSimulator/
 .env
 vendor/bundle
 .DS_Store
+scouting_reports/
