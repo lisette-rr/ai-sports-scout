@@ -1,8 +1,8 @@
-require 'httparty'
-require 'dotenv/load'
-require 'json'
-require 'csv'
-require 'fileutils' # gem (Ruby library), helps with folder creation
+require 'httparty' # External (In Gemfile)
+require 'dotenv/load' # External (In Gemfile)
+require 'json' # Standard (Built-in)
+require 'csv' # Standard (Built-in)
+require 'fileutils' # Standard (Built-in) gem (Ruby library), helps with folder creation
 
 # setup the Connection
 api_key = ENV['GEMINI_API_KEY']&.strip
@@ -10,6 +10,7 @@ url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:
 
 # creates the folder for scouting reports if it doesn't exist yet
 FileUtils.mkdir_p("scouting_reports")
+FileUtils.mkdir_p("social_media_reports")
 
 # nice clean title output for terminal
 puts "AI Sports Scout Engine: ONLINE"
@@ -21,12 +22,16 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
   
   # personalized prompt
   prompt_text = <<~PROMPT
-    You are an expert NBA scout. Analyze the following player stats and provide:
-    1. A "Pro Comparison" (which current/former player they play like).
-    2. A 1-sentence draft outlook based on their efficiency.
-
-    Player: #{row['name']}
+    You are an expert NBA scout and a social media expert. 
+    Analyze the following player: #{row['name']}
     Stats: #{row['points']} PPG, #{row['rebounds']} RPG, #{row['three_point_pct']} 3PT%
+
+    Return ONLY a raw JSON object. No markdown, no <json> tags, no preamble.
+    Format:
+    {
+      "scouting_report": "Pro Comp: [Name]. [1-sentence outlook].",
+      "social_media_caption": "[High energy post with emojis]"
+    }
   PROMPT
 
   # creates a payload that will send the prompt text to the connected model
@@ -35,7 +40,7 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
   }
 
   # prints Scouting ___ to show that the model is working
-  print "Scouting #{row['name']}... "
+  puts "Scouting and creating Social Media caption for #{row['name']}... "
   
   #This gets the response from the model
   response = HTTParty.post(
@@ -49,24 +54,50 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
 
     # This part was changed to be from terminal to save in a file
 
-    # parses through the response
-    ai_report = JSON.parse(response.body)["candidates"][0]["content"]["parts"][0]["text"]
+    # parses through the response, this is STILL A STRING
+    raw_ai_report_and_caption_string = JSON.parse(response.body)["candidates"][0]["content"]["parts"][0]["text"]
 
-    # creates a file name for the player that won't create errors by using underscores instead of spaces
-    file_name = row["name"].downcase.gsub(" ", "_") + "_report.txt"
-    file_path = "scouting_reports/#{file_name}"
+    # this will take care of any possible additional text that AI may have added
+    # this includes chatty text, or unwanted JSON tags
+    clean_json = raw_ai_report_and_caption_string.gsub(/<json>|<\/json>|```json|```/, "").strip
+
+    # calls JSON.parse again to get a Ruby Hash
+    generated_JSON = JSON.parse(clean_json)
+
+    report_text = generated_JSON["scouting_report"]
+    social_text = generated_JSON["social_media_caption"]
+
+    # creates a file name for the player report that won't create errors by using underscores instead of spaces
+    report_file_name = row["name"].downcase.gsub(" ", "_") + "_report.txt"
+    report_file_path = "scouting_reports/#{report_file_name}"
 
     #opens the file to put things in it
-    File.open(file_path, "w") do |file|
+    File.open(report_file_path, "w") do |file|
       #put the player name, date of report creation, and the report itself
       file.puts "PLAYER: #{row["name"]}"
       file.puts "DATE: #{Time.now.strftime("%Y-%m-%d")}"
       file.puts "-----------------------------------"
-      file.puts ai_report
+      file.puts report_text
     end
 
     #prints a success message in the terminal
-    puts "Done. Saved to #{file_path}"
+    puts "Done. Saved to #{report_file_path}"
+
+    # creates a file name for the player social media caption that won't create errors by using underscores instead of spaces
+    social_file_name = row["name"].downcase.gsub(" ", "_") + "_social.txt"
+    social_file_path = "social_media_reports/#{social_file_name}"
+
+    #opens the file to put things in it
+    File.open(social_file_path, "w") do |file|
+      #put the player name, date of report creation, and the report itself
+      file.puts "PLAYER: #{row["name"]}"
+      file.puts "DATE: #{Time.now.strftime("%Y-%m-%d")}"
+      file.puts "-----------------------------------"
+      file.puts social_text
+    end
+
+    #prints a success message in the terminal
+    puts "Done. Saved to #{social_file_path}"
 
   else
     #error is the response is unable to be scanned
@@ -79,3 +110,4 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
 end
 
 puts "All players scouted successfully."
+
