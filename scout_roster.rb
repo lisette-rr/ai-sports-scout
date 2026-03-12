@@ -16,6 +16,12 @@ FileUtils.mkdir_p("social_media_reports")
 puts "AI Sports Scout Engine: ONLINE"
 puts "---------------------------------"
 
+# creates a variable that keeps track of the start time of generation
+start_time = Time.now
+
+# creates a variable that keeps track of the number of players that we generated responses for
+player_count = 0
+
 # read the Roster one line at a time for memory efficiency when there is lots of data
 # headers: true allows us to use row['name'] instead of row[0]
 CSV.foreach("data/roster.csv", headers: true) do |row|
@@ -52,7 +58,8 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
   # makes sure that the response was successful
   if response.success?
 
-    # This part was changed to be from terminal to save in a file
+    # since the response generation was succesful, increment player count by one
+    player_count += 1
 
     # parses through the response, this is STILL A STRING
     raw_ai_report_and_caption_string = JSON.parse(response.body)["candidates"][0]["content"]["parts"][0]["text"]
@@ -110,4 +117,24 @@ CSV.foreach("data/roster.csv", headers: true) do |row|
 end
 
 puts "All players scouted successfully."
+puts " "
 
+# gets the end time after all generations finish
+end_time = Time.now
+
+# gets the total amount of time taken for the generation
+generation_duration_time = (end_time-start_time).round(2)
+
+# estimated amount of time saved
+# 10 minutes was chosen just as an educated estimated guess
+minutes_saved = player_count * 10
+
+puts "\n" + "="*45
+puts "🏆 BATCH COMPLETE: AI ENGAGEMENT ENGINE"
+puts "="*45
+puts "Players Processed:     #{player_count}"
+puts "Total Assets Created:  #{player_count * 2} (.txt files)"
+puts "Execution Time:        #{generation_duration_time} seconds"
+puts "Manual Labor Saved:    ~#{minutes_saved} minutes"
+puts "Status:                SYSTEM OPTIMIZED"
+puts "="*45
