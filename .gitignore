@@ -61,3 +61,4 @@ build-iPhoneSimulator/
 vendor/bundle
 .DS_Store
 scouting_reports/
+social_media_reports/
