@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scout Results Generated</title>
+    </head>
+    <body>
+        <div class="results_container">
+            
+            <h1>Results from Scout!</h1>
+
+            <% @scouted_players_data.each do |player_data| %>
+                <div class="player_card">
+                    <h2><%= player_data[:name] %></h2> 
+                    
+                    <section class="scout_results">
+                        <h3>Scout Results</h3>
+                        <p><%= player_data[:report] %></p>
+                    </section>
+                    
+                    <section class="caption_results">
+                        <h3>Social Media Caption Results</h3>
+                        <p><%= player_data[:social] %></p>
+                    </section>
+                </div>
+            <% end %>
+            <hr>
+            <a href="/">← Run Another Scout</a>
+        </div>
+    </body>
+</html>
+
+

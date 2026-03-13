@@ -15,6 +15,9 @@ def run_scout_and_media()
   FileUtils.mkdir_p("scouting_reports")
   FileUtils.mkdir_p("social_media_reports")
 
+  # Makes empty array that will be returned later
+  scouted_players = []
+
   # nice clean title output for terminal
   puts "AI Sports Scout Engine: ONLINE"
   puts "---------------------------------"
@@ -109,6 +112,16 @@ def run_scout_and_media()
       #prints a success message in the terminal
       puts "Done. Saved to #{social_file_path}"
 
+      # creates a hash to store data generated for player
+      player_data = {
+        name: row['name'],
+        report: report_text,
+        social: social_text
+      }
+
+      # adds the hash to the player data
+      scouted_players.append(player_data)
+
     else
       #error is the response is unable to be scanned
       puts "ERROR scanning #{row['name']}: #{response.code}"
@@ -141,5 +154,6 @@ def run_scout_and_media()
   puts "Manual Labor Saved:    ~#{minutes_saved} minutes"
   puts "Status:                SYSTEM OPTIMIZED"
   puts "="*45
-  
+
+  return scouted_players
 end
