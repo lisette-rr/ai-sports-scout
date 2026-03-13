@@ -130,7 +130,7 @@ generation_duration_time = (end_time-start_time).round(2)
 minutes_saved = player_count * 10
 
 puts "\n" + "="*45
-puts "🏆 BATCH COMPLETE: AI ENGAGEMENT ENGINE"
+puts "BATCH COMPLETE: AI ENGAGEMENT ENGINE"
 puts "="*45
 puts "Players Processed:     #{player_count}"
 puts "Total Assets Created:  #{player_count * 2} (.txt files)"

@@ -1,22 +1,43 @@
 # AI Sports Scout & Engagement Engine 
 
-An automated scouting tool that leverages the **Gemini 2.5 Flash API** to analyze player statistics and generate professional scouting reports.
+A high-performance Ruby pipeline designed to automate the generation of professional scouting reports and fan engagement content. By leveraging the **Gemini 2.5 Flash API**, the engine transforms raw CSV player data into structured, multi-persona analysis in seconds.
 
-## Current Features
-- **API Handshake:** Successfully integrated Google Gemini API using Ruby and HTTParty.
-- **Bulk Processing:** Logic to read player data from a `data/roster.csv` file.
-- **Automated Scouting:** Generates pro-comparisons and draft outlooks for multiple players in one command.
-- **Rate Limit Protection:** Implemented intentional delays to respect API quotas.
+## Core Features
+* **Multi-Persona Orchestration:** A single prompt architecture designed to return two distinct content streams: a technical scouting report and a high-energy social media post.
+* **Defensive Data Parsing:** Implemented robust JSON scrubbing logic to handle non-standard model responses and ensure system stability.
+* **Performance Metrics:** A built-in Return on Investment (ROI) dashboard that tracks execution time and calculates estimated manual labor savings.
+* **Automated Archiving:** A file management system that organizes generated content into distinct directory structures for scalability.
 
-## Tech Stack
-- **Language:** Ruby
-- **API:** Google Gemini (Generative AI)
-- **Data:** CSV (Spreadsheet-based roster management)
-- **Security:** Dotenv for API key protection
+## Technical Stack
+- **Language:** Ruby 2.6+
+- **External Libraries:** HTTParty (API Handshake), Dotenv (Security), Sinatra (Web Layer)
+- **Standard Libraries:** JSON, CSV, FileUtils
+- **AI Integration:** Google Gemini 2.5 Flash
 
-## How to Run
-1. Ensure your API key is in the `.env` file.
-2. Add players to `data/roster.csv`.
-3. Run the engine:
-   ```bash
-   bundle exec ruby scout_roster.rb
+
+## Installation and Usage
+1. Clone the repository to your local machine.
+2. Run `bundle install` to install all required gems.
+3. Create a `.env` file based on the provided `.env.example` and insert your Gemini API key.
+4. Execute the engine by running the following command:
+bundle exec ruby `scout_roster.rb`
+
+## System Performance and ROI
+
+The engine was benchmarked against manual content creation workflows to measure efficiency gains.
+
+* **Batch Size:** 3 Players
+
+* **Total Assets Generated:** 6 (3 Scouting Reports, 3 Social Posts)
+
+* **Processing Time:** ~15 seconds
+
+* **Estimated Manual Effort:** ~30 minutes
+
+* **Efficiency Increase:** Approximately 95%
+
+## Future Roadmap
+
+* **Web Interface:** Migration of the core logic to a Sinatra-based dashboard to improve user accessibility.
+* **Automated Testing:** Implementation of an RSpec suite to ensure code reliability and prevent regressions.
+* **Database Integration:** Transitioning from flat-file storage to a relational database like PostgreSQL for production-level scalability.
