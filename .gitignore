@@ -58,7 +58,6 @@ build-iPhoneSimulator/
 
 # --- My Custom Rules ---
 .env
-vendor/bundle
 .DS_Store
 scouting_reports/
 social_media_reports/
